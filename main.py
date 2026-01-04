@@ -1,9 +1,11 @@
 import asyncio
 import os
 import tempfile
+import threading
 from pathlib import Path
 from typing import Optional
 from urllib.error import HTTPError
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 import yt_dlp
 from telegram import Update
@@ -132,10 +134,34 @@ async def download_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     except Exception as e:
         await update.message.reply_text(_reply_generic_failed_text())
 
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/health' or self.path == '/':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(b'OK')
+        else:
+            self.send_response(404)
+            self.end_headers()
+    
+    def log_message(self, format, *args):
+        pass  # Suppress HTTP logs
+
+def start_health_check_server(port: int = 8080):
+    server = HTTPServer(('0.0.0.0', port), HealthCheckHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    print(f"Health check server running on port {port}")
+
 def main() -> None:
     async def _post_init(app: Application) -> None:
         me = await app.bot.get_me()
         print(f"Authorized as @{me.username}")
+
+    # Start health check server for platforms like Render
+    port = int(os.getenv('PORT', '8080'))
+    start_health_check_server(port)
 
     token = get_bot_token()
     application = Application.builder().token(token).post_init(_post_init).build()

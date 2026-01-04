@@ -33,13 +33,22 @@ Send a video link to the bot, and it will download and send the video back.
 
 ## Deployment
 
-For production deployment on Oracle Cloud Always Free (recommended), see [deploy/DEPLOY.md](deploy/DEPLOY.md).
+**Recommended: Render.com (Free + Easy)**
 
-Quick deployment steps:
-1. Create an Oracle Cloud Always Free VM (Ubuntu 24.04, ARM)
-2. Clone this repo on the VM
-3. Run `./deploy/setup.sh`
-4. Configure your token in `deploy/video-downloader.service`
-5. Install and start: `sudo cp deploy/video-downloader.service /etc/systemd/system/ && sudo systemctl enable --now video-downloader`
+See [deploy/RENDER_DEPLOY.md](deploy/RENDER_DEPLOY.md) for complete instructions.
 
-Full instructions with troubleshooting in [deploy/DEPLOY.md](deploy/DEPLOY.md).
+Quick steps:
+1. Push code to GitHub
+2. Create new Web Service on Render.com from your GitHub repo
+3. Add `TELEGRAM_BOT_TOKEN` environment variable
+4. Deploy (takes 2-5 minutes)
+5. Set up free UptimeRobot monitor to keep bot awake 24/7
+
+**Alternative: VPS Deployment**
+
+For self-hosted deployment on Ubuntu/Debian VPS, see [deploy/DEPLOY.md](deploy/DEPLOY.md).
+
+VPS providers:
+- Oracle Cloud (Always Free tier)
+- DigitalOcean ($4-6/month)
+- Hetzner Cloud (€3-5/month)

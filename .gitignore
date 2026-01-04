@@ -27,8 +27,7 @@ temp_video.*
 # Cookies (if someone tries to add them)
 cookies.txt
 
-# IDE
-.vscode/
+# IDE (but keep .vscode for workspace settings)
 .idea/
 *.swp
 *.swo
